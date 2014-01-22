@@ -29,7 +29,7 @@ import javax.servlet.http.HttpSession;
  */
 public class testServlet extends HttpServlet {
 
-    public static final int CALLBACK_TIMEOUT = 10000; // ms
+    public static final int CALLBACK_TIMEOUT = 900000; // ms
     /**
      * executor service
      */
@@ -96,15 +96,16 @@ public class testServlet extends HttpServlet {
                     ServletResponse response = ctx.getResponse();
                     if (response != null) {
                         Runtime rt = Runtime.getRuntime();
-                        Process pr = rt.exec("ping 192.168.1.9 -n 20");
+                        Process pr = rt.exec("ping 192.168.1.9 -n 5");
+                        
                         BufferedReader br = new BufferedReader(new InputStreamReader(
                                 pr.getInputStream()));
                         String line = null;
                         while ((line = br.readLine()) != null) {
-                            System.out.println(line);
+                            response.getWriter().write(MessageFormat.format("Processing task in bgt_id:[{0},{1}]",
+                                Thread.currentThread().getId(),line));
+                            response.getWriter().flush();
                         }
-                        response.getWriter().write(MessageFormat.format("Processing task in bgt_id:[{0}]",
-                                Thread.currentThread().getId()));
                         response.getWriter().close();
                         ctx.complete();
                     } else {
@@ -113,7 +114,6 @@ public class testServlet extends HttpServlet {
                 } catch (IllegalStateException ex) {
                     System.out.println(ex.getMessage());
                 } catch (Exception e) {
-                    System.out.println(e.getMessage());
                 }
             }
         });

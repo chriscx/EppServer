@@ -12,6 +12,10 @@
         <servlet-name>testServlet</servlet-name>
         <servlet-class>fr.ece.epp.testServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>MyServlet</servlet-name>
+        <servlet-class>fr.ece.epp.MyServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>RepositoryAjaxServlet</servlet-name>
         <url-pattern>/RepositoryAjaxServlet</url-pattern>
@@ -24,9 +28,11 @@
         <servlet-name>testServlet</servlet-name>
         <url-pattern>/testServlet</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>MyServlet</servlet-name>
+        <url-pattern>/MyServlet</url-pattern>
+    </servlet-mapping>
     <session-config>
-        <session-timeout>
-            300
-        </session-timeout>
+        <session-timeout>300</session-timeout>
     </session-config>
 </web-app>
