@@ -112,6 +112,9 @@ public class Utils {
             document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(path);
             Element root = document.getDocumentElement();
             Node features =  root.getElementsByTagName("features").item(0);
+            Element basefeature =document.createElement("feature");
+            basefeature.setAttribute("id", "org.eclipse.platform");
+            features.appendChild(basefeature);
             for(int i = 0;i<feature.length;i++){
                 Element fea =document.createElement("feature");
        
