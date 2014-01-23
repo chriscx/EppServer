@@ -86,19 +86,6 @@ public class MyServlet extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
-    private void writeBat(String sessionId) {
-        try {
-            File writename = new File(mvnCommand);
-            writename.createNewFile(); // 创建新文件
-            BufferedWriter out = new BufferedWriter(new FileWriter(writename));
-            out.write("%~d0\n\r");
-            out.write("cd %~dp0\n\r");
-            out.write("mvn install -Pconf -Ddir=f://target//" + sessionId);
-            out.flush(); // 把缓存区内容压入文件
-            out.close(); // 最后记得关闭文件  
-        } catch (IOException ex) {
-        }
-    }
 
     public void modifyPom(String node) {
 

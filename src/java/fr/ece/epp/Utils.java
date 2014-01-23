@@ -5,10 +5,12 @@
  */
 package fr.ece.epp;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Level;
@@ -168,5 +170,19 @@ public class Utils {
              }
          }
          return "";
+    }
+    
+    public static void writeBat(String path,String version) {
+        try {
+            File writename = new File(path);
+            writename.createNewFile(); 
+            BufferedWriter out = new BufferedWriter(new FileWriter(writename));
+            out.write("%~d0\n\r");
+            out.write("cd %~dp0\n\r");
+            out.write("mvn install -P base,"+version);
+            out.flush(); // 把缓存区内容压入文件
+            out.close(); // 最后记得关闭文件  
+        } catch (IOException ex) {
+        }
     }
 }

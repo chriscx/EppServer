@@ -15,7 +15,8 @@
 
     String strFeature = request.getParameter("feature");
     String strRepo = request.getParameter("repo");
-
+    String version = request.getParameter("version");
+    
     String[] feature = strFeature.split(",");
     String[] repo = strRepo.split(",");
 
@@ -37,12 +38,9 @@
     System.out.println("[Modify product]");
     Utils.updateProduct(path + "/" + name + "/eclipseplusplus.product", feature, true);
     //Step 4 copy install and modify
-    System.out.println("[Copy Install]");
-    Utils.copy(new File(path + "/install.bat"), new File(path + "/" + name));
-
-    //Step 5 install
-    //Step 6 save to db
-
+    System.out.println("[Create Install]");
+    //Utils.copy(new File(path + "/install.bat"), new File(path + "/" + name));
+    Utils.writeBat(path + "/" + name + "/install.bat", version);
 %>
 
 <!DOCTYPE html>
