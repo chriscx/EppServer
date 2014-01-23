@@ -6,11 +6,12 @@
 package fr.ece.epp;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -22,29 +23,57 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class MyServlet extends HttpServlet {
 
+    private String mvnCommand = "\\build\\install.bat";
+
     @Override
-    public void service(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException {
-        System.out.println("service 被调用" + Thread.currentThread().getId());
-        response.setContentType("text/html;charset=UTF-8");
-        PrintWriter out = response.getWriter();
+    public void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        /* TODO output your page here. You may use following sample code. */
-        Runtime rt = Runtime.getRuntime();
-        Process pr = rt.exec("ping 192.168.1.9 -n 25");
+            response.setContentType("text/html;charset=UTF-8");
+            PrintWriter out = response.getWriter();
 
-        out.println("<h1>Parent:" + Thread.currentThread().getId() + "</h1>");
-        BufferedReader br = new BufferedReader(new InputStreamReader(
-                pr.getInputStream()));
-        String line = "";
-        out.println("<h1>Child:" + Thread.currentThread().getId() + "</h1>");
-        out.flush();
+            String strFeature = request.getParameter("feature");
+            String strRepo = request.getParameter("repo");
+            
+            String[] feature =  strFeature.split(",");
+            String[] repo =  strRepo.split(",");
 
-        while ((line = br.readLine()) != null) {
-                out.println("<h1>" + line + "</h1>");
+            System.out.println("service is called by " + Thread.currentThread().getId());
+            String path = request.getServletContext().getRealPath("/build");
+            String name = request.getSession().getId();
+
+            //Step  1  create folder
+            System.out.println("[Create folder]");
+            Utils.createFolder(path, name);
+            //Step 2 create pom
+            System.out.println("[Copy pom]");
+            Utils.copy(new File(path + "/pom.xml"), new File(path + "/" + name));
+            System.out.println("[Modify pom]");
+            Utils.updatePom(path + "/" + name + "/pom.xml", repo, true);
+            //Step 3 create product file
+            System.out.println("[Copy product]");
+            Utils.copy(new File(path + "/eclipseplusplus.product"), new File(path + "/" + name));
+            System.out.println("[Modify product]");
+            Utils.updateProduct(path + "/" + name + "/eclipseplusplus.product", feature, true);
+            //Step 4 copy install and modify
+            System.out.println("[Copy Install]");
+            Utils.copy(new File(path + "/install.bat"), new File(path + "/" + name));
+ 
+            //Step 5 install
+            System.out.println("[Install]");
+            Runtime rt = Runtime.getRuntime();
+            Process pr = rt.exec(path + "/" + name + "/install.bat");
+            //Process pr = rt.exec("ping 192.168.1.9 -n 20");
+            BufferedReader br = new BufferedReader(new InputStreamReader(
+                    pr.getInputStream()));
+            String line = null;
+            while ((line = br.readLine()) != null) {
+                System.out.println(line);
+                out.println("<h4>" + line + "</h4>");
                 out.flush();
-        }
-        out.close();
+            }
+            //Step 6 save to db
 
+            out.close();
     }
 
     /**
@@ -57,4 +86,21 @@ public class MyServlet extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
+    private void writeBat(String sessionId) {
+        try {
+            File writename = new File(mvnCommand);
+            writename.createNewFile(); // 创建新文件
+            BufferedWriter out = new BufferedWriter(new FileWriter(writename));
+            out.write("%~d0\n\r");
+            out.write("cd %~dp0\n\r");
+            out.write("mvn install -Pconf -Ddir=f://target//" + sessionId);
+            out.flush(); // 把缓存区内容压入文件
+            out.close(); // 最后记得关闭文件  
+        } catch (IOException ex) {
+        }
+    }
+
+    public void modifyPom(String node) {
+
+    }
 }
