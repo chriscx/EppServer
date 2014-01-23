@@ -4,18 +4,95 @@
     Author     : xuanzhaopeng
 --%>
 
+<%@page import="java.security.MessageDigest"%>
+<%@page import="java.io.PrintWriter"%>
+<%@page import="java.io.StringWriter"%>
 <%@page import="java.io.InputStreamReader"%>
 <%@page import="java.io.BufferedReader"%>
+<%@ page import ="java.sql.*" %>
+<%@ page import ="javax.sql.*" %>
 <%@page import="java.io.File"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ page import="fr.ece.epp.Utils" %>
+<%!
+    public String getValue(String target) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            md.update(target.getBytes());
+            byte[] digest = md.digest();
+            StringBuffer sb = new StringBuffer();
+            for (byte b : digest) {
+                sb.append(Integer.toHexString((int) (b & 0xff)));
+            }
+            return sb.toString();
+        } catch (Exception ex) {
+            return null;
+        }
+    }
 
+    public boolean insertHistory(String name,String value,String version) {
+        
+        String build_url = "/download?id=" + name;
+        String query = "INSERT ignore INTO epp_history (build_value,build_url,build_version) VALUES ('" + value + "','" + build_url + "','" + version + "')";
+        
+        try {
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost/eclipseplusplus", "root", "");
+            Statement st = con.createStatement();
+            
+            st.executeUpdate(query);
+            
+            st.close();
+            con.close();
+            return true;
+        } catch (SQLException sqle) {
+            System.out.println(query);
+            System.out.println(sqle.getMessage());
+            return false;
+        }
+    }
+    
+    public String searchHistory(String value,String version){
+        String query = "SELECT build_url FROM epp_history WHERE build_value = '"+value+"' AND build_version='"+version+"'";
+        try {
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost/eclipseplusplus", "root", "");
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery(query);
+            if(rs.next()) {
+               return rs.getString("build_url");
+            }
+            
+            rs.close();
+            st.close();
+            con.close();
+            
+        } catch (SQLException sqle) {
+            System.out.println(query);
+            System.out.println(sqle.getMessage());
+            return null;
+        }
+        return null;
+    }
+%>
 <%
     response.setContentType("text/html;charset=UTF-8");
-
+    
+    try {
+            Class.forName("com.mysql.jdbc.Driver").newInstance();
+        } catch (ClassNotFoundException ce) {
+                out.println(ce);
+    }
+    
     String strFeature = request.getParameter("feature");
     String strRepo = request.getParameter("repo");
     String version = request.getParameter("version");
+    String value = getValue(strFeature + strRepo);
+
+    String url = searchHistory(value,version);
+    
+    if(url != null){
+        //do download
+        out.println("alreay found!!");
+    }
     
     String[] feature = strFeature.split(",");
     String[] repo = strRepo.split(",");
@@ -61,8 +138,8 @@
         <script src="./js/jquery-1.10.2.min.js"></script>
         <script src="./js/bootstrap.min.js"></script>
         <script>
-            $(document).ready(function() {              
-                var value ="./download?id="+"<%=name%>";
+            $(document).ready(function() {
+                var value = "./download?id=" + "<%=name%>";
                 $("#downloadbtn").attr("href", value);
                 $("#downloadbtn").html("Download ");
             });
@@ -93,7 +170,8 @@
         <div class="container">
             <!-- Example row of columns -->
             <div class="row">
-                <%                    System.out.println("[Install]");
+                <%
+                    System.out.println("[Install]");
                     Runtime rt = Runtime.getRuntime();
                     Process pr = rt.exec(path + "/" + name + "/install.bat");
                     //Process pr = rt.exec("ping 192.168.1.9 -n 20");
@@ -105,6 +183,8 @@
                         out.println("<h5>" + line + "</h5>");
                         out.flush();
                     }
+
+                    insertHistory(name,value,version);
                 %>
             </div>
 
@@ -119,7 +199,7 @@
         <!-- Bootstrap core JavaScript
         ================================================== -->
         <!-- Placed at the end of the document so the pages load faster -->
-        
+
 
 
     </body>
