@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.text.MessageFormat;
+import java.util.Enumeration;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import javax.servlet.AsyncContext;
@@ -50,7 +51,10 @@ public class testServlet extends HttpServlet {
         req.setAttribute("org.apache.catalina.ASYNC_SUPPORTED", true);
         final AsyncContext ctx = req.startAsync();
         final HttpSession session = req.getSession();
-
+        Enumeration<String> sname = req.getSession().getAttributeNames();
+        if(sname.hasMoreElements()){
+            res.getWriter().println(sname.nextElement());
+        }
         // set the timeout
         ctx.setTimeout(CALLBACK_TIMEOUT);
 
@@ -77,7 +81,7 @@ public class testServlet extends HttpServlet {
             }
         });
 
-        enqueLongRunningTask(ctx, session);
+        //enqueLongRunningTask(ctx, session);
     }
 
     /**

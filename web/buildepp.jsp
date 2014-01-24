@@ -30,17 +30,17 @@
         }
     }
 
-    public boolean insertHistory(String name,String value,String version) {
-        
+    public boolean insertHistory(String name, String value, String version) {
+
         String build_url = "/download?id=" + name;
         String query = "INSERT ignore INTO epp_history (build_value,build_url,build_version) VALUES ('" + value + "','" + build_url + "','" + version + "')";
-        
+
         try {
             Connection con = DriverManager.getConnection("jdbc:mysql://localhost/eclipseplusplus", "root", "");
             Statement st = con.createStatement();
-            
+
             st.executeUpdate(query);
-            
+
             st.close();
             con.close();
             return true;
@@ -50,21 +50,21 @@
             return false;
         }
     }
-    
-    public String searchHistory(String value,String version){
-        String query = "SELECT build_url FROM epp_history WHERE build_value = '"+value+"' AND build_version='"+version+"'";
+
+    public String searchHistory(String value, String version) {
+        String query = "SELECT build_url FROM epp_history WHERE build_value = '" + value + "' AND build_version='" + version + "'";
         try {
             Connection con = DriverManager.getConnection("jdbc:mysql://localhost/eclipseplusplus", "root", "");
             Statement st = con.createStatement();
             ResultSet rs = st.executeQuery(query);
-            if(rs.next()) {
-               return rs.getString("build_url");
+            if (rs.next()) {
+                return rs.getString("build_url");
             }
-            
+
             rs.close();
             st.close();
             con.close();
-            
+
         } catch (SQLException sqle) {
             System.out.println(query);
             System.out.println(sqle.getMessage());
@@ -75,49 +75,55 @@
 %>
 <%
     response.setContentType("text/html;charset=UTF-8");
-    
+    Boolean foundCache = false;
+    String downloadUrl = "";
     try {
-            Class.forName("com.mysql.jdbc.Driver").newInstance();
-        } catch (ClassNotFoundException ce) {
-                out.println(ce);
+        Class.forName("com.mysql.jdbc.Driver").newInstance();
+    } catch (ClassNotFoundException ce) {
+        out.println(ce);
     }
-    
+
     String strFeature = request.getParameter("feature");
     String strRepo = request.getParameter("repo");
     String version = request.getParameter("version");
+    String path = "";
+    String name = "";
     String value = getValue(strFeature + strRepo);
 
-    String url = searchHistory(value,version);
-    
-    if(url != null){
+    String url = searchHistory(value, version);
+
+    if (url != null) {
         //do download
-        out.println("alreay found!!");
+        foundCache = true;
+        downloadUrl = "."+url;
     }
-    
-    String[] feature = strFeature.split(",");
-    String[] repo = strRepo.split(",");
 
-    System.out.println("service is called by " + Thread.currentThread().getId());
-    String path = request.getServletContext().getRealPath("/build");
-    String name = request.getSession().getId();
+    if (!foundCache) {
+        String[] feature = strFeature.split(",");
+        String[] repo = strRepo.split(",");
 
-    //Step  1  create folder
-    System.out.println("[Create folder]");
-    Utils.createFolder(path, name);
-    //Step 2 create pom
-    System.out.println("[Copy pom]");
-    Utils.copy(new File(path + "/pom.xml"), new File(path + "/" + name));
-    System.out.println("[Modify pom]");
-    Utils.updatePom(path + "/" + name + "/pom.xml", repo, true);
-    //Step 3 create product file
-    System.out.println("[Copy product]");
-    Utils.copy(new File(path + "/eclipseplusplus.product"), new File(path + "/" + name));
-    System.out.println("[Modify product]");
-    Utils.updateProduct(path + "/" + name + "/eclipseplusplus.product", feature, true);
-    //Step 4 copy install and modify
-    System.out.println("[Create Install]");
-    //Utils.copy(new File(path + "/install.bat"), new File(path + "/" + name));
-    Utils.writeBat(path + "/" + name + "/install.bat", version);
+        System.out.println("service is called by " + Thread.currentThread().getId());
+        path = request.getServletContext().getRealPath("/build");
+        name = request.getSession().getId();
+        downloadUrl = "./download?id=" + name;
+        //Step  1  create folder
+        System.out.println("[Create folder]");
+        Utils.createFolder(path, name);
+        //Step 2 create pom
+        System.out.println("[Copy pom]");
+        Utils.copy(new File(path + "/pom.xml"), new File(path + "/" + name));
+        System.out.println("[Modify pom]");
+        Utils.updatePom(path + "/" + name + "/pom.xml", repo, true);
+        //Step 3 create product file
+        System.out.println("[Copy product]");
+        Utils.copy(new File(path + "/eclipseplusplus.product"), new File(path + "/" + name));
+        System.out.println("[Modify product]");
+        Utils.updateProduct(path + "/" + name + "/eclipseplusplus.product", feature, true);
+        //Step 4 copy install and modify
+        System.out.println("[Create Install]");
+        //Utils.copy(new File(path + "/install.bat"), new File(path + "/" + name));
+        Utils.writeBat(path + "/" + name + "/install.bat", version);
+    }
 %>
 
 <!DOCTYPE html>
@@ -139,9 +145,9 @@
         <script src="./js/bootstrap.min.js"></script>
         <script>
             $(document).ready(function() {
-                var value = "./download?id=" + "<%=name%>";
+                var value = "<%=downloadUrl%>";
                 $("#downloadbtn").attr("href", value);
-                $("#downloadbtn").html("Download ");
+                $("#downloadbtn").html("Download Your Eclipse!");
             });
 
         </script>
@@ -163,7 +169,7 @@
             <div class="container">
                 <h1>Eclipse++ by ECE Paris & UPMC Lib6</h1>
                 <p>Someone should write description here</p>
-                <p><a id="downloadbtn" name="downloadbtn" class="btn btn-primary btn-lg" role="button">Building ... </a></p>
+                <p><a id="downloadbtn" name="downloadbtn" class="btn btn-primary btn-lg" role="button">Building ...... </a></p>
             </div>
         </div>
 
@@ -171,20 +177,27 @@
             <!-- Example row of columns -->
             <div class="row">
                 <%
-                    System.out.println("[Install]");
-                    Runtime rt = Runtime.getRuntime();
-                    Process pr = rt.exec(path + "/" + name + "/install.bat");
-                    //Process pr = rt.exec("ping 192.168.1.9 -n 20");
-                    BufferedReader br = new BufferedReader(new InputStreamReader(
-                            pr.getInputStream()));
-                    String line = null;
-                    while ((line = br.readLine()) != null) {
-                        System.out.println(line);
-                        out.println("<h5>" + line + "</h5>");
-                        out.flush();
+                    if (!foundCache) {
+                        Boolean hasError = false;
+                        System.out.println("[Install]");
+                        Runtime rt = Runtime.getRuntime();
+                        Process pr = rt.exec(path + "/" + name + "/install.bat");
+                        //Process pr = rt.exec("ping 192.168.1.9 -n 20");
+                        BufferedReader br = new BufferedReader(new InputStreamReader(
+                                pr.getInputStream()));
+                        String line = null;
+                        while ((line = br.readLine()) != null) {
+                            System.out.println(line);
+                            if(line.toLowerCase().contains("error")){
+                                hasError = true;
+                            }
+                            out.println("<h5>" + line + "</h5>");
+                            out.flush();
+                        }
+                        if(!hasError){
+                            insertHistory(name, value, version);
+                        }
                     }
-
-                    insertHistory(name,value,version);
                 %>
             </div>
 

@@ -41,9 +41,8 @@ public class downloadServlet extends HttpServlet {
             String id = request.getParameter("id");
              //  path是指欲下载的文件的路径。   
             String sPath = request.getServletContext().getRealPath("/build");
-            String name = request.getSession().getId();
-            String zip = Utils.foundZip(sPath + "\\" + name + "\\target\\products");
-            String path = sPath + "\\" + name + "\\target\\products\\" + zip;
+            String zip = Utils.foundZip(sPath + "\\" + id + "\\target\\products");
+            String path = sPath + "\\" + id + "\\target\\products\\" + zip;
             InputStream fis  =   new  BufferedInputStream( new  FileInputStream(path)); 
             
              byte [] buffer  =   new   byte [fis.available()];  

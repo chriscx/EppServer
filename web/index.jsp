@@ -5,6 +5,11 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+
+<%
+    String redirectURL = "http://192.168.1.8/Admin/";
+    response.sendRedirect(redirectURL);
+%>
 <!DOCTYPE html>
 <html>
     <head>

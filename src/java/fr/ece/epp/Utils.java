@@ -77,18 +77,18 @@ public class Utils {
         try {
             document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(path);
             Element root = document.getDocumentElement();
-            Node repositories =  root.getElementsByTagName("repositories").item(0);
-            for(int i = 0;i<repo.length;i++){
-                Element repository =document.createElement("repository");
-                
+            Node repositories = root.getElementsByTagName("repositories").item(0);
+            for (int i = 0; i < repo.length; i++) {
+                Element repository = document.createElement("repository");
+
                 Element id = document.createElement("id");
                 id.appendChild(document.createTextNode("repository" + i));
                 repository.appendChild(id);
-                
+
                 Element layout = document.createElement("layout");
                 layout.appendChild(document.createTextNode("p2"));
                 repository.appendChild(layout);
-                
+
                 Element url = document.createElement("url");
                 url.appendChild(document.createTextNode(repo[i]));
 
@@ -105,28 +105,28 @@ public class Utils {
         } catch (ParserConfigurationException e) {
         }
     }
-    
-     public static void updateProduct(String path, String[] feature, boolean outOrno) {
+
+    public static void updateProduct(String path, String[] feature, boolean outOrno) {
         Document document = null;
         try {
             document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(path);
             Element root = document.getDocumentElement();
-            Node features =  root.getElementsByTagName("features").item(0);
-            Element basefeature =document.createElement("feature");
+            Node features = root.getElementsByTagName("features").item(0);
+            Element basefeature = document.createElement("feature");
             basefeature.setAttribute("id", "org.eclipse.platform");
             features.appendChild(basefeature);
-            for(int i = 0;i<feature.length;i++){
-                Element fea =document.createElement("feature");
-       
-                    if(feature[i].endsWith(".feature.group")){
+            for (int i = 0; i < feature.length; i++) {             
+                if (feature[i] != null && feature[i].trim().length() > 0) {
+                    Element fea = document.createElement("feature");
+                    if (feature[i].endsWith(".feature.group")) {
                         int count = feature[i].length() - ".featyre.group".length();
                         String id = feature[i].substring(0, count);
                         fea.setAttribute("id", id);
-                    }else{
-                         fea.setAttribute("id", feature[i]);
+                    } else {
+                        fea.setAttribute("id", feature[i]);
                     }
-                
-                features.appendChild(fea);
+                    features.appendChild(fea);
+                }
             }
             output(root, path);
             if (outOrno) {
@@ -162,27 +162,27 @@ public class Utils {
             e.printStackTrace();
         }
     }
-    
-    public static String foundZip(String path){
-         System.out.println("path:" + path);
-         File directory = new File(path);
-         File[] files = directory.listFiles();
-         for(File file : files){
-             if(file.getName().endsWith(".zip")){
-                 return file.getName();
-             }
-         }
-         return "";
+
+    public static String foundZip(String path) {
+        System.out.println("path:" + path);
+        File directory = new File(path);
+        File[] files = directory.listFiles();
+        for (File file : files) {
+            if (file.getName().endsWith(".zip")) {
+                return file.getName();
+            }
+        }
+        return "";
     }
-    
-    public static void writeBat(String path,String version) {
+
+    public static void writeBat(String path, String version) {
         try {
             File writename = new File(path);
-            writename.createNewFile(); 
+            writename.createNewFile();
             BufferedWriter out = new BufferedWriter(new FileWriter(writename));
             out.write("%~d0\n\r");
             out.write("cd %~dp0\n\r");
-            out.write("mvn install -P base,"+version);
+            out.write("mvn install -P base," + version);
             out.flush(); // 把缓存区内容压入文件
             out.close(); // 最后记得关闭文件  
         } catch (IOException ex) {
