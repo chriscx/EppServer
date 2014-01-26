@@ -122,7 +122,7 @@
         //Step 4 copy install and modify
         System.out.println("[Create Install]");
         //Utils.copy(new File(path + "/install.bat"), new File(path + "/" + name));
-        Utils.writeBat(path + "/" + name + "/install.bat", version);
+        Utils.writeScript(path + "/" + name + "/install.bat", version);
     }
 %>
 

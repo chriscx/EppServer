@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fr.ece.epp;
+package fr.ece.epp.tools;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -39,16 +39,17 @@ import org.xml.sax.SAXException;
 public class Utils {
 
     public static void createFolder(String path, String name) {
-        
+
         String fullPathFolder = "", system = System.getProperty("os.name");
-        if(system.startsWith("Windows")) {
+
+        if (system.startsWith("Windows")) {
             fullPathFolder = path + "\\" + name;
             new File(fullPathFolder).mkdir();
-        }
-        else if (system.startsWith("Linux") || system.startsWith("Mac")) {
+        } else if (system.startsWith("Linux") || system.startsWith("Mac")) {
             fullPathFolder = path + "/" + name;
             new File(fullPathFolder).mkdir();
         }
+
         System.out.println("Create folder :" + fullPathFolder);
     }
 
@@ -184,37 +185,35 @@ public class Utils {
         return "";
     }
 
-    public static void writeBat(String path, String version) {
+    public static void writeScript(String path, String version) {
+        String system = System.getProperty("os.name");
         try {
-            File writename = new File(path);
-            writename.createNewFile();
-            BufferedWriter out = new BufferedWriter(new FileWriter(writename));
-            out.write("%~d0\n\r");
-            out.write("cd %~dp0\n\r");
-            out.write("mvn install -P base," + version);
-            out.flush(); // 把缓存区内容压入文件
-            out.close(); // 最后记得关闭文件  
+            if (system.startsWith("Windows")) {
+                File writename = new File(path);
+                writename.createNewFile();
+                
+                BufferedWriter out = new BufferedWriter(new FileWriter(writename));
+                
+                out.write("%~d0\n\r");
+                out.write("cd %~dp0\n\r");
+                out.write("mvn install -P base," + version);
+                out.flush(); // 把缓存区内容压入文件
+                out.close(); // 最后记得关闭文件  
+                
+            } else if (system.startsWith("Linux") || system.startsWith("Mac")) {
+                File writename = new File(path);
+                writename.createNewFile();
+                
+                BufferedWriter out = new BufferedWriter(new FileWriter(writename));
+
+                out.write("#!/bin/sh\n\n");
+                out.write("BASEDIR=$(dirname $0)\n");
+                out.write("cd $BASEDIR\n");
+                out.write("mvn install -P base," + version);
+                out.flush(); // 把缓存区内容压入文件
+                out.close(); // 最后记得关闭文件  
+            }
         } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-    }
-    
-        public static void writeBashScript(String path, String version) {
-        try {
-            File writename = new File(path);
-            
-            writename.createNewFile();
-            BufferedWriter out = new BufferedWriter(new FileWriter(writename));
-            
-            out.write("#!/bin/sh\n\n");
-            out.write("BASEDIR=$(dirname $0)\n");
-            out.write("cd $BASEDIR\n");
-            out.write("mvn install -P base," + version);
-            out.flush(); // 把缓存区内容压入文件
-            out.close(); // 最后记得关闭文件  
-            
-        }
-        catch (IOException ex) {
             ex.printStackTrace();
         }
     }

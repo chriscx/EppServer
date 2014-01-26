@@ -5,6 +5,7 @@
  */
 package fr.ece.epp;
 
+import fr.ece.epp.tools.Utils;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;

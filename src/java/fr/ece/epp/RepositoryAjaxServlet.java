@@ -35,7 +35,7 @@ public class RepositoryAjaxServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
-        String date = sDateFormat.format(new java.util.Date());
+//        String date = sDateFormat.format(new java.util.Date());
         //System.out.println("Repository Ajax Request :" + RepositoryServlet.threadCount + " - " + date);
         response.addHeader("Access-Control-Allow-Origin", "*");
         response.setContentType("text/plain");  // Set content type of the response so that jQuery knows what it can expect.
