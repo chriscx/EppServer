@@ -39,8 +39,17 @@ import org.xml.sax.SAXException;
 public class Utils {
 
     public static void createFolder(String path, String name) {
-        new File(path + "\\" + name).mkdir();
-        System.out.println("Create folder :" + path + "\\" + name);
+        
+        String fullPathFolder = "", system = System.getProperty("os.name");
+        if(system.startsWith("Windows")) {
+            fullPathFolder = path + "\\" + name;
+            new File(fullPathFolder).mkdir();
+        }
+        else if (system.startsWith("Linux") || system.startsWith("Mac")) {
+            fullPathFolder = path + "/" + name;
+            new File(fullPathFolder).mkdir();
+        }
+        System.out.println("Create folder :" + fullPathFolder);
     }
 
     public static void copy(File resFile, File objFolderFile) throws IOException {
@@ -186,6 +195,27 @@ public class Utils {
             out.flush(); // 把缓存区内容压入文件
             out.close(); // 最后记得关闭文件  
         } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+    
+        public static void writeBashScript(String path, String version) {
+        try {
+            File writename = new File(path);
+            
+            writename.createNewFile();
+            BufferedWriter out = new BufferedWriter(new FileWriter(writename));
+            
+            out.write("#!/bin/sh\n\n");
+            out.write("BASEDIR=$(dirname $0)\n");
+            out.write("cd $BASEDIR\n");
+            out.write("mvn install -P base," + version);
+            out.flush(); // 把缓存区内容压入文件
+            out.close(); // 最后记得关闭文件  
+            
+        }
+        catch (IOException ex) {
+            ex.printStackTrace();
         }
     }
 }
