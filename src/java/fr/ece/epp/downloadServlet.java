@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package fr.ece.epp;
 
 import java.io.BufferedInputStream;
@@ -26,8 +25,9 @@ import javax.servlet.http.HttpServletResponse;
 public class downloadServlet extends HttpServlet {
 
     /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
+     * Processes requests for both HTTP
+     * <code>GET</code> and
+     * <code>POST</code> methods.
      *
      * @param request servlet request
      * @param response servlet response
@@ -37,35 +37,36 @@ public class downloadServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         PrintWriter out = response.getWriter();
-        try  {  
+        try {
             String id = request.getParameter("id");
-             //  path是指欲下载的文件的路径。   
+            //  path是指欲下载的文件的路径。   
             String sPath = request.getServletContext().getRealPath("/build");
             String zip = Utils.foundZip(sPath + "\\" + id + "\\target\\products");
             String path = sPath + "\\" + id + "\\target\\products\\" + zip;
-            InputStream fis  =   new  BufferedInputStream( new  FileInputStream(path)); 
-            
-             byte [] buffer  =   new   byte [fis.available()];  
-            fis.read(buffer);  
-            fis.close();  
-            response.reset();  
+            InputStream fis = new BufferedInputStream(new FileInputStream(path));
+
+            byte[] buffer = new byte[fis.available()];
+            fis.read(buffer);
+            fis.close();
+            response.reset();
             String fileName = "eclipse.zip";
-            response.setHeader( "Content-Disposition" ,"attachment;filename="+fileName);  
+            response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
             //response.setHeader( " Content-Length " ,  ""   +  file.length());  
-            OutputStream toClient  =   new  BufferedOutputStream(response.getOutputStream());  
+            OutputStream toClient = new BufferedOutputStream(response.getOutputStream());
             //response.setContentType( "application/x-msdownload " );  
-            
-            toClient.write(buffer);  
-            toClient.flush();  
-            toClient.close();  
-        }  catch  (IOException ex) {  
-            ex.printStackTrace();  
-        }  
+
+            toClient.write(buffer);
+            toClient.flush();
+            toClient.close();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
-     * Handles the HTTP <code>GET</code> method.
+     * Handles the HTTP
+     * <code>GET</code> method.
      *
      * @param request servlet request
      * @param response servlet response
@@ -79,7 +80,8 @@ public class downloadServlet extends HttpServlet {
     }
 
     /**
-     * Handles the HTTP <code>POST</code> method.
+     * Handles the HTTP
+     * <code>POST</code> method.
      *
      * @param request servlet request
      * @param response servlet response

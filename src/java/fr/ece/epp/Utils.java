@@ -115,7 +115,7 @@ public class Utils {
             Element basefeature = document.createElement("feature");
             basefeature.setAttribute("id", "org.eclipse.platform");
             features.appendChild(basefeature);
-            for (int i = 0; i < feature.length; i++) {             
+            for (int i = 0; i < feature.length; i++) {
                 if (feature[i] != null && feature[i].trim().length() > 0) {
                     Element fea = document.createElement("feature");
                     if (feature[i].endsWith(".feature.group")) {

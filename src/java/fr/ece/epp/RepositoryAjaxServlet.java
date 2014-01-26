@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package fr.ece.epp;
 
 import java.io.IOException;
@@ -19,10 +18,13 @@ import javax.servlet.http.HttpServletResponse;
  * @author xuanzhaopeng
  */
 public class RepositoryAjaxServlet extends HttpServlet {
+
     SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+
     /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
+     * Processes requests for both HTTP
+     * <code>GET</code> and
+     * <code>POST</code> methods.
      *
      * @param request servlet request
      * @param response servlet response
@@ -33,7 +35,7 @@ public class RepositoryAjaxServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
-        String date = sDateFormat.format(new   java.util.Date());  
+        String date = sDateFormat.format(new java.util.Date());
         //System.out.println("Repository Ajax Request :" + RepositoryServlet.threadCount + " - " + date);
         response.addHeader("Access-Control-Allow-Origin", "*");
         response.setContentType("text/plain");  // Set content type of the response so that jQuery knows what it can expect.
@@ -43,7 +45,8 @@ public class RepositoryAjaxServlet extends HttpServlet {
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
-     * Handles the HTTP <code>GET</code> method.
+     * Handles the HTTP
+     * <code>GET</code> method.
      *
      * @param request servlet request
      * @param response servlet response
@@ -57,7 +60,8 @@ public class RepositoryAjaxServlet extends HttpServlet {
     }
 
     /**
-     * Handles the HTTP <code>POST</code> method.
+     * Handles the HTTP
+     * <code>POST</code> method.
      *
      * @param request servlet request
      * @param response servlet response

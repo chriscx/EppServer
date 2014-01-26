@@ -95,7 +95,7 @@
     if (url != null) {
         //do download
         foundCache = true;
-        downloadUrl = "."+url;
+        downloadUrl = "." + url;
     }
 
     if (!foundCache) {
@@ -188,13 +188,13 @@
                         String line = null;
                         while ((line = br.readLine()) != null) {
                             System.out.println(line);
-                            if(line.toLowerCase().contains("error")){
+                            if (line.toLowerCase().contains("error")) {
                                 hasError = true;
                             }
                             out.println("<h5>" + line + "</h5>");
                             out.flush();
                         }
-                        if(!hasError){
+                        if (!hasError) {
                             insertHistory(name, value, version);
                         }
                     }

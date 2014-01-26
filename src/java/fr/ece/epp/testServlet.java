@@ -52,7 +52,7 @@ public class testServlet extends HttpServlet {
         final AsyncContext ctx = req.startAsync();
         final HttpSession session = req.getSession();
         Enumeration<String> sname = req.getSession().getAttributeNames();
-        if(sname.hasMoreElements()){
+        if (sname.hasMoreElements()) {
             res.getWriter().println(sname.nextElement());
         }
         // set the timeout
@@ -62,22 +62,18 @@ public class testServlet extends HttpServlet {
         ctx.addListener(new AsyncListener() {
             @Override
             public void onComplete(AsyncEvent event) throws IOException {
-
             }
 
             @Override
             public void onTimeout(AsyncEvent event) throws IOException {
-
             }
 
             @Override
             public void onError(AsyncEvent event) throws IOException {
-
             }
 
             @Override
             public void onStartAsync(AsyncEvent event) throws IOException {
-
             }
         });
 
@@ -101,13 +97,13 @@ public class testServlet extends HttpServlet {
                     if (response != null) {
                         Runtime rt = Runtime.getRuntime();
                         Process pr = rt.exec("ping 192.168.1.9 -n 5");
-                        
+
                         BufferedReader br = new BufferedReader(new InputStreamReader(
                                 pr.getInputStream()));
                         String line = null;
                         while ((line = br.readLine()) != null) {
                             response.getWriter().write(MessageFormat.format("Processing task in bgt_id:[{0},{1}]",
-                                Thread.currentThread().getId(),line));
+                                    Thread.currentThread().getId(), line));
                             response.getWriter().flush();
                         }
                         response.getWriter().close();
