@@ -40,8 +40,10 @@ public class RepositoryServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
         String repository = request.getParameter("repository");
         System.out.println(repository);
+        String path = request.getServletContext().getRealPath("/repository");
+       
         RepositoryServlet.threadCount++;
-        Thread thread = new Thread(new RepositoryRunnable(repository));
+        Thread thread = new Thread(new RepositoryRunnable(repository,path));
         thread.start();
         out.close();
     }

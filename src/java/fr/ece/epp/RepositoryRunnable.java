@@ -15,16 +15,19 @@ import java.io.PrintWriter;
  *
  * @author xuanzhaopeng
  */
-public class RepositoryRunnable implements Runnable {
-
-    private String batPath = "D:\\pfe\\osgi_platform_web\\";
-    private String repository;
-    private PrintWriter out;
-
-    public RepositoryRunnable(String repository) {
-        this.repository = repository;
-    }
-
+public class RepositoryRunnable implements Runnable  {
+     private String batPath = "";
+     private String repository;
+     private PrintWriter out;
+     
+   public RepositoryRunnable(String repository,String path){
+       this.repository = repository;
+       this.batPath = path;
+       if(!this.batPath.endsWith("/")){
+           this.batPath = this.batPath + "/";
+       }
+   }
+     
     @Override
     public void run() {
         this.WriteStringToFile5(batPath + "url.txt", repository);

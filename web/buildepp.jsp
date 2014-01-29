@@ -130,7 +130,7 @@
             nameScript = "install.sh";
         }
 
-        Utils.writeScript(path + "/" + name + nameScript, version);
+        Utils.writeScript(path + "/" + name +"/" + nameScript, version);
     }
 %>
 
@@ -194,7 +194,7 @@
                         if (System.getProperty("os.name").startsWith("Windows")) {
 
                             nameScript = "install.bat";
-                            pr = rt.exec(path + "/" + name + nameScript);
+                            pr = rt.exec(path + "/" + name + "/" + nameScript);
 
                             BufferedReader br = new BufferedReader(new InputStreamReader(
                                     pr.getInputStream()));
@@ -203,7 +203,7 @@
                             while ((line = br.readLine()) != null) {
 
                                 System.out.println(line);
-                                if (line.toLowerCase().contains("error")) {
+                                if (line.toLowerCase().contains("[error]")) {
                                     hasError = true;
                                 }
 
@@ -217,7 +217,7 @@
 
                         } else if (System.getProperty("os.name").startsWith("Linux") || System.getProperty("os.name").startsWith("Mac")) {
                             nameScript = "install.sh";
-                            pr = rt.exec(path + "/" + name + nameScript);
+                            pr = rt.exec(path + "/" + name + "/" + nameScript);
 
                             BufferedReader br = new BufferedReader(new InputStreamReader(
                                     pr.getInputStream()));
