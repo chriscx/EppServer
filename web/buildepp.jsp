@@ -227,7 +227,7 @@
 
                         } else if (System.getProperty("os.name").startsWith("Linux") || System.getProperty("os.name").startsWith("Mac")) {
                             nameScript = "install.sh";
-                            pr = rt.exec(path + "/" + name + "/" + nameScript);
+                            pr = rt.exec("bash "+ path + "/" + name + "/" + nameScript);
 
                             BufferedReader br = new BufferedReader(new InputStreamReader(
                                     pr.getInputStream()));
