@@ -13,6 +13,7 @@
 <%@ page import ="java.sql.*" %>
 <%@ page import ="javax.sql.*" %>
 <%@page import="java.io.File"%>
+<%@ page import="fr.ece.epp.Mail" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%!
     public String getValue(String target) {
@@ -36,7 +37,7 @@
         String query = "INSERT ignore INTO epp_history (build_value,build_url,build_version) VALUES ('" + value + "','" + build_url + "','" + version + "')";
 
         try {
-            Connection con = DriverManager.getConnection("jdbc:mysql://localhost/eclipseplusplus", "root", "");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost/eclipseplusplus", "root", "root");
             Statement st = con.createStatement();
 
             st.executeUpdate(query);
@@ -54,7 +55,7 @@
     public String searchHistory(String value, String version) {
         String query = "SELECT build_url FROM epp_history WHERE build_value = '" + value + "' AND build_version='" + version + "'";
         try {
-            Connection con = DriverManager.getConnection("jdbc:mysql://localhost/eclipseplusplus", "root", "");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost/eclipseplusplus", "root", "root");
             Statement st = con.createStatement();
             ResultSet rs = st.executeQuery(query);
             if (rs.next()) {
@@ -85,17 +86,24 @@
 
     String strFeature = request.getParameter("feature");
     String strRepo = request.getParameter("repo");
+    String strGroups = request.getParameter("groups");
     String version = request.getParameter("version");
+    String email = request.getParameter("email");
+    
+    Mail mail = new Mail();
     String path = "";
     String name = "";
     String value = getValue(strFeature + strRepo);
 
     String url = searchHistory(value, version);
+    String maildownloadUrl = "";
 
     if (url != null) {
         //do download
         foundCache = true;
         downloadUrl = "." + url;
+        String[] groups = strGroups.split(",");
+        mail.sendMail(email, "http://54.229.179.57:8078/EppServer"+url, groups);
     }
 
     if (!foundCache) {
@@ -212,6 +220,8 @@
                             }
 
                             if (!hasError) {
+                                String[] groups = strGroups.split(",");
+                                mail.sendMail(email, maildownloadUrl, groups);
                                 insertHistory(name, value, version);
                             }
 
@@ -235,6 +245,8 @@
                             }
 
                             if (!hasError) {
+                                String[] groups = strGroups.split(",");
+                                mail.sendMail(email, maildownloadUrl, groups);
                                 insertHistory(name, value, version);
                             }
                         }
