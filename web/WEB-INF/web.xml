@@ -9,14 +9,6 @@
         <servlet-class>fr.ece.epp.RepositoryServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>testServlet</servlet-name>
-        <servlet-class>fr.ece.epp.testServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>MyServlet</servlet-name>
-        <servlet-class>fr.ece.epp.MyServlet</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>downloadServlet</servlet-name>
         <servlet-class>fr.ece.epp.downloadServlet</servlet-class>
     </servlet>
@@ -27,14 +19,6 @@
     <servlet-mapping>
         <servlet-name>RepositoryServlet</servlet-name>
         <url-pattern>/RepositoryServlet</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>testServlet</servlet-name>
-        <url-pattern>/testServlet</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>MyServlet</servlet-name>
-        <url-pattern>/MyServlet</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>downloadServlet</servlet-name>
