@@ -15,32 +15,45 @@ import java.io.PrintWriter;
  *
  * @author xuanzhaopeng
  */
-public class RepositoryRunnable implements Runnable  {
-     private String batPath = "";
-     private String repository;
-     private PrintWriter out;
-     
-   public RepositoryRunnable(String repository,String path){
-       this.repository = repository;
-       this.batPath = path;
-       if(!this.batPath.endsWith("/")){
-           this.batPath = this.batPath + "/";
-       }
-   }
-     
+public class RepositoryRunnable implements Runnable {
+
+    private String batPath = "";
+    private String repository;
+    private PrintWriter out;
+
+    public RepositoryRunnable(String repository, String path) {
+        this.repository = repository;
+        this.batPath = path;
+        if (!this.batPath.endsWith("/")) {
+            this.batPath = this.batPath + "/";
+        }
+    }
+
     @Override
     public void run() {
-        this.WriteStringToFile5(batPath + "url.txt", repository);
+        this.WriteStringToFile(batPath + "url.txt", repository);
         Runtime rt = Runtime.getRuntime();
         try {
-            Process pr = rt.exec(batPath + "run.bat");
-            BufferedReader br = new BufferedReader(new InputStreamReader(
-                    pr.getInputStream()));
-            String line = null;
-            while ((line = br.readLine()) != null) {
-                System.out.println(line);
+            if (System.getProperty("os.name").startsWith("Windows")) {
+                Process pr = rt.exec(batPath + "run.bat");
+                BufferedReader br = new BufferedReader(new InputStreamReader(
+                        pr.getInputStream()));
+                String line = null;
+                while ((line = br.readLine()) != null) {
+                    System.out.println(line);
+                }
+                RepositoryServlet.threadCount--;
+            }else{
+                Process pr = rt.exec("bash "+batPath + "run.sh");
+                BufferedReader br = new BufferedReader(new InputStreamReader(
+                        pr.getInputStream()));
+                String line = null;
+                while ((line = br.readLine()) != null) {
+                    System.out.println(line);
+                }
+                RepositoryServlet.threadCount--;
             }
-            RepositoryServlet.threadCount--;
+
         } catch (IOException e) {
             // TODO Auto-generated catch block
             RepositoryServlet.threadCount--;
@@ -48,7 +61,7 @@ public class RepositoryRunnable implements Runnable  {
         }
     }
 
-    public void WriteStringToFile5(String filePath, String content) {
+    public void WriteStringToFile(String filePath, String content) {
         try {
             FileOutputStream fos = new FileOutputStream(filePath);
             String s = content;
