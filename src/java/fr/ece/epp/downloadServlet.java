@@ -41,7 +41,7 @@ public class downloadServlet extends HttpServlet {
         try {
             String id = request.getParameter("id");
             //  path是指欲下载的文件的路径。   
-            String sPath = request.getServletContext().getRealPath("/build");
+            String sPath = request.getServletContext().getRealPath("build");
 
             String zip = "";
             String path = "";

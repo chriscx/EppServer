@@ -17,7 +17,7 @@ import java.io.PrintWriter;
  */
 public class RepositoryRunnable implements Runnable {
 
-    private String batPath = "";
+    private String batPath = "/home/ubuntu/epp";
     private String repository;
     private PrintWriter out;
 
