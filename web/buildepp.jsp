@@ -31,22 +31,22 @@
         }
     }
 
-    public boolean insertHistory(String name, String value, String version) {
+    public boolean insertHistory(String name, String value, String version, int uid, String features, String repo) {
 
         String build_url = "/download?id=" + name;
-        String query = "INSERT ignore INTO epp_history (build_value,build_url,build_version) VALUES ('" + value + "','" + build_url + "','" + version + "')";
-
+        String query1 = "INSERT ignore INTO epp_history (build_value,build_url,build_version,uid) VALUES ('" + value + "','" + build_url + "','" + version + "','" + uid + "')";
+        String query2 = "INSERT ignore INTO epp_tracking (uid,build_features,build_repo,build_url,build_version) VALUES ('" + uid + "','" + features + "','"  + repo + "','" + build_url + "','" + version + "')";
         try {
-            Connection con = DriverManager.getConnection("jdbc:mysql://localhost/eclipseplusplus", "root", "root");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost/eclipseplusplus", "root", "");
             Statement st = con.createStatement();
 
-            st.executeUpdate(query);
+            st.executeUpdate(query1);
+            st.executeUpdate(query2);
 
             st.close();
             con.close();
             return true;
         } catch (SQLException sqle) {
-            System.out.println(query);
             System.out.println(sqle.getMessage());
             return false;
         }
@@ -89,7 +89,8 @@
     String strGroups = request.getParameter("groups");
     String version = request.getParameter("version");
     String email = request.getParameter("email");
-    
+    int uid = Integer.parseInt(request.getParameter("uid"));
+    System.out.println(uid);
     Mail mail = new Mail();
     String path = "";
     String name = "";
@@ -170,7 +171,7 @@
 
         <!-- Just for debugging purposes. Don't actually copy this line! -->
         <!--[if lt IE 9]><script src="../../docs-assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
-n
+
         <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!--[if lt IE 9]>
           <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -183,7 +184,7 @@ n
         <!-- Main jumbotron for a primary marketing message or call to action -->
         <div class="jumbotron">
             <div class="container">
-                <h1>Eclipse++ by ECE Paris & UPMC Lib6</h1>
+                <h1>Eclipse++ by ECE Paris & UPMC Lip6</h1>
                 <p>Someone should write description here</p>
                 <p><a id="downloadbtn" name="downloadbtn" class="btn btn-primary btn-lg" role="button">Building ...... </a></p>
             </div>
@@ -222,7 +223,7 @@ n
                             if (!hasError) {
                                 String[] groups = strGroups.split(",");
                                 mail.sendMail(email, maildownloadUrl, groups);
-                                insertHistory(name, value, version);
+                                insertHistory(name, value, version,uid,strFeature,strRepo);
                             }
 
                         } else if (System.getProperty("os.name").startsWith("Linux") || System.getProperty("os.name").startsWith("Mac")) {
@@ -247,7 +248,7 @@ n
                             if (!hasError) {
                                 String[] groups = strGroups.split(",");
                                 mail.sendMail(email, maildownloadUrl, groups);
-                                insertHistory(name, value, version);
+                                insertHistory(name, value, version,uid,strFeature,strRepo);
                             }
                         }
                     }
